@@ -1,14 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { lazy } from "react";
+
 import MainLayout from "./layout/MainLayout";
 import AdminRoute from "./routes/AdminRoute";
 import { AuthProvider } from "./context/AuthProvider";
-
-// Lazy load các trang
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Patient = lazy(() => import("./pages/Patient"));
-const Band = lazy(() => import("./pages/Band"));
-const Login = lazy(() => import("./pages/LoginWithGoogle"));
+import Dashboard from "./pages/Dashboard";
+import Patient from "./pages/Patient";
+import Band from "./pages/Band";
+import Login from "./pages/LoginWithGoogle";
 
 const App = () => {
   return (
