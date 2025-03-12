@@ -38,23 +38,28 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="flex justify-center items-center min-h-screen bg-cover bg-center px-4"
-      style={{ backgroundImage: `url(${background})` }}
-    >
-      <div className="bg-white p-10 shadow-2xl rounded-2xl w-full max-w-md bg-opacity-90">
-        <h2 className="text-center text-3xl font-bold mb-6 text-gray-800">
-          Welcome Back
-        </h2>
-        <p className="text-center text-gray-500 mb-8">
-          Đăng nhập để tiếp tục sử dụng dịch vụ
-        </p>
-        <Button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center border-gray-300 shadow-md py-3 text-lg font-semibold transition duration-300 hover:bg-gray-100"
-        >
-          <GoogleOutlined className="mr-2 text-xl" /> Login with Google
-        </Button>
+    <div className="relative h-screen">
+      {/* Background Image - full màn hình */}
+      <div
+        className="absolute inset-0 bg-center bg-contain"
+        style={{ backgroundImage: `url(${background})` }}></div>
+
+      {/* Form Login - Chiếm 50% width, nằm trên background */}
+      <div className="relative w-1/2 h-screen flex justify-center items-center bg-white bg-opacity-90 p-10 shadow-2xl border border-gray-300 rounded-r-3xl">
+        <div className="w-full max-w-sm">
+          <h2 className="text-center text-3xl font-bold mb-4 text-gray-800">
+            Welcome Back
+          </h2>
+          <p className="text-center text-gray-500 mb-6">
+            Đăng nhập để tiếp tục sử dụng dịch vụ
+          </p>
+
+          <Button
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center py-3 text-lg font-semibold transition duration-300 hover:bg-blue-600 rounded-full">
+            <GoogleOutlined className="mr-2 text-xl" /> Login with Google
+          </Button>
+        </div>
       </div>
     </div>
   );

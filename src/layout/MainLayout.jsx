@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import { Layout, Menu, Avatar, Dropdown, Space, Button,message } from "antd";
-import { DesktopOutlined, ClockCircleOutlined, MenuFoldOutlined, MenuUnfoldOutlined,UserOutlined } from "@ant-design/icons";
+import { Layout, Menu, Avatar, Dropdown, Space, Button, message } from "antd";
+import {
+  DesktopOutlined,
+  ClockCircleOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { assets } from "../assets/assets";
 import { signOut, auth } from "../firebaseConfig";
 const { Header, Content, Footer, Sider } = Layout;
@@ -46,23 +52,43 @@ const MainLayout = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        style={{ backgroundColor: "#A0E9FF", paddingTop: "10px", textAlign: "center", borderRight: "1px solid #ddd" }}
-      >
-        <div style={{ padding: "12px 0", display: "flex", justifyContent: "center" }}>
+        style={{
+          backgroundColor: "white",
+          paddingTop: "10px",
+          textAlign: "center",
+          borderRight: "1px solid #ddd",
+        }}>
+        <div
+          style={{
+            padding: "12px 0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
           <img
             src={assets.logo}
             alt="Logo"
             style={{
-              width: collapsed ? "50px" : "150px",
+              width: collapsed ? "50px" : "50px",
               transition: "width 0.3s ease-in-out",
             }}
           />
+          <p
+            className={`text-lg font-medium transition-all duration-300 ${
+              collapsed ? "hidden" : "block"
+            } ml-2`}>
+            FHealth Care
+          </p>
         </div>
         <Menu
           theme="light"
           defaultSelectedKeys={["dashboard"]}
           mode="inline"
-          style={{ borderRight: "none", fontSize: "16px", backgroundColor: "#CDF5FD" }}
+          style={{
+            borderRight: "none",
+            fontSize: "16px",
+            backgroundColor: "white",
+          }}
           onClick={handleMenuClick}
           items={[
             { key: "dashboard", icon: <DesktopOutlined />, label: "Dashboard" },
@@ -81,8 +107,7 @@ const MainLayout = () => {
             alignItems: "center",
             padding: "0 20px",
             borderBottom: "1px solid #ddd",
-          }}
-        >
+          }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -97,13 +122,16 @@ const MainLayout = () => {
           <h1 className="m-0 text-2xl text-gray-800">Welcome to Dashboard</h1>
 
           <Dropdown menu={{ items: userMenuItems }} trigger={["click"]}>
-              <Space>
+            <Space>
               <Avatar
                 src={userPhoto}
                 size={40}
                 style={{ cursor: "pointer", backgroundColor: "#f39c12" }}
               />
-              <span style={{ fontSize: "16px", fontWeight: "500" }}>{userName}</span> {/* Hiển thị tên */}
+              <span style={{ fontSize: "16px", fontWeight: "500" }}>
+                {userName}
+              </span>{" "}
+              {/* Hiển thị tên */}
             </Space>
           </Dropdown>
         </Header>
@@ -114,8 +142,7 @@ const MainLayout = () => {
             background: "#f9f9f9",
             display: "flex",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <div
             style={{
               width: "100%",
@@ -125,23 +152,21 @@ const MainLayout = () => {
               borderRadius: "8px",
               boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
               color: "#333",
-            }}
-          >
+            }}>
             <Outlet />
           </div>
         </Content>
 
-        <Footer
+        {/* <Footer
           style={{
             textAlign: "center",
             backgroundColor: "#fff",
             color: "#7f8c8d",
             padding: "10px",
             borderTop: "1px solid #ddd",
-          }}
-        >
+          }}>
           Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
+        </Footer> */}
       </Layout>
     </Layout>
   );
