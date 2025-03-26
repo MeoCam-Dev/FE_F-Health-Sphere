@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { Layout, Menu, Avatar, Dropdown, Space, Button, message } from "antd";
 import {
   DesktopOutlined,
@@ -10,33 +10,40 @@ import {
 } from "@ant-design/icons";
 import { assets } from "../assets/assets";
 import { signOut, auth } from "../firebaseConfig";
-const { Header, Content, Footer, Sider } = Layout;
+
+const { Header, Content, Sider } = Layout;
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [userName, setUserName] = useState("User"); // Lưu tên người dùng
-  const [userPhoto, setUserPhoto] = useState(""); // Lưu ảnh đại diện
+  const [userName, setUserName] = useState("User");
+  const [userPhoto, setUserPhoto] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Lấy tên và ảnh từ Firebase Auth
+  const [selectedKey, setSelectedKey] = useState(
+    location.pathname.substring(1) || "dashboard"
+  );
+
+  useEffect(() => {
+    setSelectedKey(location.pathname.substring(1) || "dashboard");
+  }, [location.pathname]);
+
   useEffect(() => {
     if (auth.currentUser) {
       setUserName(auth.currentUser.displayName || "User");
-      setUserPhoto(auth.currentUser.photoURL || "https://i.pravatar.cc/40"); // Ảnh mặc định nếu không có
+      setUserPhoto(auth.currentUser.photoURL || "https://i.pravatar.cc/40");
     }
   }, []);
+
   const handleMenuClick = ({ key }) => {
-    if (key === "logout") {
-      handleLogout();
-    } else {
-      navigate(`/${key}`);
-    }
+    setSelectedKey(key);
+    navigate(`/${key}`);
   };
 
   const handleLogout = async () => {
     await signOut(auth);
-    localStorage.clear(); // Xóa tất cả thông tin đăng nhập
-    message.success("Bạn đã đăng xuất thành công!");
+    localStorage.clear();
+    message.success("Logout Successful!");
     navigate("/login");
   };
 
@@ -57,14 +64,16 @@ const MainLayout = () => {
           paddingTop: "10px",
           textAlign: "center",
           borderRight: "1px solid #ddd",
-        }}>
+        }}
+      >
         <div
           style={{
             padding: "12px 0",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-          }}>
+          }}
+        >
           <img
             src={assets.logo}
             alt="Logo"
@@ -76,13 +85,14 @@ const MainLayout = () => {
           <p
             className={`text-lg font-medium transition-all duration-300 ${
               collapsed ? "hidden" : "block"
-            } ml-2`}>
+            } ml-2`}
+          >
             FHealth Care
           </p>
         </div>
         <Menu
           theme="light"
-          defaultSelectedKeys={["dashboard"]}
+          selectedKeys={[selectedKey]}
           mode="inline"
           style={{
             borderRight: "none",
@@ -107,7 +117,8 @@ const MainLayout = () => {
             alignItems: "center",
             padding: "0 20px",
             borderBottom: "1px solid #ddd",
-          }}>
+          }}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -130,8 +141,7 @@ const MainLayout = () => {
               />
               <span style={{ fontSize: "16px", fontWeight: "500" }}>
                 {userName}
-              </span>{" "}
-              {/* Hiển thị tên */}
+              </span>
             </Space>
           </Dropdown>
         </Header>
@@ -142,7 +152,8 @@ const MainLayout = () => {
             background: "#f9f9f9",
             display: "flex",
             justifyContent: "center",
-          }}>
+          }}
+        >
           <div
             style={{
               width: "100%",
@@ -152,21 +163,11 @@ const MainLayout = () => {
               borderRadius: "8px",
               boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
               color: "#333",
-            }}>
+            }}
+          >
             <Outlet />
           </div>
         </Content>
-
-        {/* <Footer
-          style={{
-            textAlign: "center",
-            backgroundColor: "#fff",
-            color: "#7f8c8d",
-            padding: "10px",
-            borderTop: "1px solid #ddd",
-          }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer> */}
       </Layout>
     </Layout>
   );

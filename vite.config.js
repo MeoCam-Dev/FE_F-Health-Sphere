@@ -8,6 +8,7 @@ export default defineConfig({
     hmr: {
       protocol: 'ws',
       host: 'localhost'
-    }
+    },
+     base: "/",
   }
 })
