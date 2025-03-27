@@ -48,8 +48,6 @@ const MainLayout = () => {
   };
 
   const userMenuItems = [
-    { key: "profile", label: "Profile" },
-    { key: "settings", label: "Settings" },
     { key: "logout", label: "Logout", onClick: handleLogout },
   ];
 

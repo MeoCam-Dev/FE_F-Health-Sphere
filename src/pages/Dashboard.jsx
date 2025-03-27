@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  FaUserInjured,
-  FaCalendarCheck,
-  FaFileMedical,
-  FaDollarSign,
-} from "react-icons/fa";
 import RecentPatients from "../components/RecentPatients";
 import {
   ResponsiveContainer,
@@ -102,39 +96,38 @@ const Dashboard = () => {
 
       {/* Biểu đồ huyết áp */}
       <div className="bg-white rounded-xl p-6 shadow-md mb-6">
-  <h3 className="text-xl font-bold mb-4 text-gray-700">
-    Blood Pressure Report –{" "}
-    <span className="text-indigo-600">{patientName}</span>
-  </h3>
+        <h3 className="text-xl font-bold mb-4 text-gray-700">
+          Blood Pressure Report –{" "}
+          <span className="text-indigo-600">{patientName}</span>
+        </h3>
 
-  {chartData.length === 0 ? (
-    <p className="text-gray-500 italic text-center">
-      No health data available for this patient.
-    </p>
-  ) : (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={chartData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="time" />
-        <YAxis />
-        <Tooltip />
-        <Line
-          type="monotone"
-          dataKey="systolic"
-          stroke="#8884d8"
-          name="Tâm thu"
-        />
-        <Line
-          type="monotone"
-          dataKey="diastolic"
-          stroke="#82ca9d"
-          name="Tâm trương"
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  )}
-</div>
-
+        {chartData.length === 0 ? (
+          <p className="text-gray-500 italic text-center">
+            No health data available for this patient.
+          </p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="time" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="systolic"
+                stroke="#8884d8"
+                name="Tâm thu"
+              />
+              <Line
+                type="monotone"
+                dataKey="diastolic"
+                stroke="#82ca9d"
+                name="Tâm trương"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </div>
 
       {/* Recent Patients (giữ nguyên) */}
       <div className="flex flex-wrap gap-6 w-full">

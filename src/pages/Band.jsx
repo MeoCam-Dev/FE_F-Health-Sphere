@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getBands, getBandBrandById } from "../api/band";
 import { getPatientsById } from "../api/patient";
 import { Pagination } from "antd";
-import { FaFilter } from "react-icons/fa";
 
 const Band = () => {
   const [bands, setBands] = useState([]);
@@ -106,12 +105,6 @@ const Band = () => {
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
             /> */}
-            <button
-              className="bg-green-500 text-white p-3 px-5 rounded-lg ml-2 hover:scale-105 transition"
-              onClick={() => setCurrentPage(1)} // reset page on filter
-            >
-              <FaFilter />
-            </button>
           </div>
         </div>
 

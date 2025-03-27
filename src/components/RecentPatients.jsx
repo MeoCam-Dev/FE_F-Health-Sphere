@@ -49,7 +49,9 @@ const RecentPatients = () => {
     <div className="w-full flex flex-col xl:flex-row gap-6  p-4  transition-all duration-300">
       {/* Patients Table */}
       <div className="w-full xl:w-1/2 mb-6 bg-white rounded-lg shadow-md">
-        <h3 className="text-gray-700 font-semibold mb-4 p-4 border-b">Recent Patients</h3>
+        <h3 className="text-gray-700 font-semibold mb-4 p-4 border-b">
+          Recent Patients
+        </h3>
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
@@ -62,12 +64,18 @@ const RecentPatients = () => {
           <tbody>
             {patients.map((patient) => (
               <tr key={patient.id} className="">
-                <td className="px-4 py-2">{patient.fullName || `Patient ${patient.id}`}</td>
+                <td className="px-4 py-2">
+                  {patient.fullName || `Patient ${patient.id}`}
+                </td>
                 <td className="px-4 py-2">{patient.phoneNumber || "N/A"}</td>
-                <td className="px-4 py-2">{patient.patientInfo?.gender || "Unknown"}</td>
+                <td className="px-4 py-2">
+                  {patient.patientInfo?.gender || "Unknown"}
+                </td>
                 <td className="px-4 py-2">
                   {patient.patientInfo?.dateOfBirth
-                    ? new Date(patient.patientInfo.dateOfBirth).toLocaleDateString()
+                    ? new Date(
+                        patient.patientInfo.dateOfBirth
+                      ).toLocaleDateString()
                     : "Unknown"}
                 </td>
               </tr>
@@ -78,7 +86,9 @@ const RecentPatients = () => {
 
       {/* Bands Table */}
       <div className="w-full xl:w-1/2 bg-white rounded-lg shadow-md">
-        <h3 className="text-gray-700 font-semibold mb-4 p-4 border-b">Recent Devices</h3>
+        <h3 className="text-gray-700 font-semibold mb-4 p-4 border-b">
+          Recent Devices
+        </h3>
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
@@ -93,7 +103,17 @@ const RecentPatients = () => {
               <tr key={band.id} className="">
                 <td className="px-4 py-2">{band.bandCode || "N/A"}</td>
                 <td className="px-4 py-2">{band.nameBrand || "Unknown"}</td>
-                <td className="px-4 py-2">{band.isActive ? "Active" : "Inactive"}</td>
+                <td className="py-4 px-6">
+                  <span
+                    className={`px-4 py-1 rounded-full text-xs font-semibold ${
+                      band.isActive
+                        ? "bg-green-100 text-green-600"
+                        : "bg-orange-100 text-orange-600"
+                    }`}
+                  >
+                    {band.isActive ? "Active" : "Inactive"}
+                  </span>
+                </td>
                 <td className="px-4 py-2">
                   {band.createdTime
                     ? new Date(band.createdTime).toLocaleDateString()

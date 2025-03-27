@@ -5,15 +5,19 @@ const Patient = () => {
   const [patients, setPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); // State lưu từ khóa tìm kiếm
   const [selectedGender, setSelectedGender] = useState(""); // State lưu giới tính được chọn
+  const [loading, setLoading] = useState(true); // State lưu trạng thái loading
 
   useEffect(() => {
     const fetchPatients = async () => {
+      setLoading(true); // Bắt đầu loading
       try {
         const response = await getPatients();
         const data = response?.data?.items?.$values || [];
         setPatients(data);
       } catch (error) {
         console.error("Error fetching patients:", error);
+      } finally {
+        setLoading(false); // Kết thúc loading
       }
     };
 
@@ -55,51 +59,59 @@ const Patient = () => {
 
       {/* Patient Table */}
       <div className="bg-white p-5 rounded-lg shadow-sm overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b text-gray-400 bg-gray-100">
-              <th className="py-4 px-6">#</th>
-              <th className="py-4 px-6">Patient</th>
-              <th className="py-4 px-6">Email</th>
-              <th className="py-4 px-6">Gender</th>
-              <th className="py-4 px-6">Date of Birth</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPatients.map((patient, index) => (
-              <tr key={patient.id} className="border-b hover:bg-gray-50">
-                <td className="py-4 px-6">{index + 1}</td>
-                <td className="py-4 px-6 font-semibold">
-                  {patient.fullName || "N/A"}
-                </td>
-                <td className="py-4 px-6">{patient.email || "N/A"}</td>
-                <td className="py-4 px-6">
-                  <span
-                    className={`px-4 py-1 rounded-full text-xs font-semibold ${
-                      patient.patientInfo?.gender === "Male"
-                        ? "bg-green-100 text-green-600"
-                        : patient.patientInfo?.gender === "Female"
-                        ? "bg-orange-100 text-orange-600"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {patient.patientInfo?.gender || "N/A"}
-                  </span>
-                </td>
-                <td className="py-4 px-6">
-                  {patient.patientInfo?.dateOfBirth || "N/A"}
-                </td>
+        {loading ? (
+          <div className="text-center py-6 text-gray-500">Loading...</div>
+        ) : (
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b text-gray-400 bg-gray-100">
+                <th className="py-4 px-6">#</th>
+                <th className="py-4 px-6">Patient</th>
+                <th className="py-4 px-6">Email</th>
+                <th className="py-4 px-6">Gender</th>
+                <th className="py-4 px-6">Date of Birth</th>
               </tr>
-            ))}
-            {filteredPatients.length === 0 && (
-              <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
-                  No patients found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredPatients.map((patient, index) => (
+                <tr key={patient.id} className="border-b hover:bg-gray-50">
+                  <td className="py-4 px-6">{index + 1}</td>
+                  <td className="py-4 px-6 font-semibold">
+                    {patient.fullName || "N/A"}
+                  </td>
+                  <td className="py-4 px-6">{patient.email || "N/A"}</td>
+                  <td className="py-4 px-6">
+                    <span
+                      className={`px-4 py-1 rounded-full text-xs font-semibold ${
+                        patient.patientInfo?.gender === "Male"
+                          ? "bg-green-100 text-green-600"
+                          : patient.patientInfo?.gender === "Female"
+                          ? "bg-orange-100 text-orange-600"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {patient.patientInfo?.gender || "N/A"}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6">
+                    {patient.patientInfo?.dateOfBirth
+                      ? new Date(patient.patientInfo.dateOfBirth)
+                          .toLocaleDateString("en-GB")
+                          .replace(/\//g, "-")
+                      : "N/A"}
+                  </td>
+                </tr>
+              ))}
+              {filteredPatients.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center py-4 text-gray-500">
+                    No patients found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

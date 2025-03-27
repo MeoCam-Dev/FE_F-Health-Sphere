@@ -9,7 +9,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Thêm interceptor để tự động đính kèm token (nếu có)
 axiosInstance.interceptors.request.use(
   (config) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -21,11 +20,9 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Xử lý lỗi response toàn cục
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // console.error("API Error:", error);
     return Promise.reject(error.response?.data || "An error occurred");
   }
 );

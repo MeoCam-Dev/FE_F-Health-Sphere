@@ -7,7 +7,7 @@ export const loginWithGoogle = (idToken) =>
     },
   }).then((res) => res.data);
 
-// Lấy danh sách bands từ API
+
 export const getBands = (pageNumber = 1, pageSize = 10) =>
   axiosInstance
     .get(`/bands?pageNumber=${pageNumber}&pageSize=${pageSize}`)
