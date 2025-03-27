@@ -1,8 +1,10 @@
 import axiosInstance from "./api";
 
 // Lấy danh sách bands (có phân trang)
-export const getBands = (pageNumber = 1, pageSize = 10) =>
-  axiosInstance.get(`/bands?pageNumber=${pageNumber}&pageSize=${pageSize}`).then((res) => res.data);
+export const getBands = (pageNumber = 1, pageSize = 10, filters = {}) => {
+  const params = { pageNumber, pageSize, ...filters };
+  return axiosInstance.get(`/bands`, { params }).then((res) => res.data);
+};
 
 // Lấy band theo ID
 export const getBandById = (id) =>

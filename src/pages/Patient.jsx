@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { FaCalendar, FaFilter } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 import { getPatients } from "../api/patient";
 
 const Patient = () => {
   const [patients, setPatients] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // State lưu từ khóa tìm kiếm
+  const [selectedGender, setSelectedGender] = useState(""); // State lưu giới tính được chọn
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -20,70 +22,43 @@ const Patient = () => {
     fetchPatients();
   }, []);
 
+  // Lọc bệnh nhân dựa trên searchTerm và selectedGender
+  const filteredPatients = patients.filter((patient) => {
+    const matchesSearchTerm = patient.fullName
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesGender =
+      !selectedGender || patient.patientInfo?.gender === selectedGender;
+    return matchesSearchTerm && matchesGender;
+  });
+
   return (
     <div className="p-6 min-h-screen">
-      {/* Header Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {/* Today Patients */}
-        <div className="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-          <div>
-            <h2 className="text-gray-500 text-sm">Today Patients</h2>
-            <p className="text-3xl font-semibold">10</p>
-            <p className="text-sm text-gray-400">
-              Total Patients <span className="text-green-500">10</span> today
-            </p>
-          </div>
-          <FaCalendar className="text-green-500 text-2xl" />
-        </div>
-
-        {/* Monthly Patients */}
-        <div className="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-          <div>
-            <h2 className="text-gray-500 text-sm">Monthly Patients</h2>
-            <p className="text-3xl font-semibold">230</p>
-            <p className="text-sm text-gray-400">
-              Total Patients <span className="text-orange-500">230</span> this
-              month
-            </p>
-          </div>
-          <div className="bg-orange-500 text-white p-2 rounded-lg text-sm">
-            Aug
-          </div>
-        </div>
-
-        {/* Yearly Patients */}
-        <div className="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-          <div>
-            <h2 className="text-gray-500 text-sm">Yearly Patients</h2>
-            <p className="text-3xl font-semibold">1,500</p>
-            <p className="text-sm text-gray-400">
-              Total Patients <span className="text-green-500">1,500</span> this
-              year
-            </p>
-          </div>
-          <FaCalendar className="text-green-500 text-2xl" />
-        </div>
-      </div>
-
       {/* Search & Filters */}
       <div className="bg-white p-5 rounded-lg shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <input
           type="text"
           placeholder='Search "Patients"'
           className="border border-gray-300 p-3 rounded-lg w-full min-w-0"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Cập nhật state searchTerm
         />
+
+        <select
+          className="border border-gray-300 p-3 rounded-lg w-full min-w-0"
+          onChange={(e) => setSelectedGender(e.target.value)} // Cập nhật state selectedGender
+          value={selectedGender}
+        >
+          <option value="">Gender...</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
 
         <select className="border border-gray-300 p-3 rounded-lg w-full min-w-0">
           <option>Sort by...</option>
           <option>Name</option>
           <option>Age</option>
           <option>Blood Group</option>
-        </select>
-
-        <select className="border border-gray-300 p-3 rounded-lg w-full min-w-0">
-          <option>Gender...</option>
-          <option>Male</option>
-          <option>Female</option>
         </select>
 
         <div className="flex items-center w-full min-w-0">
@@ -98,7 +73,6 @@ const Patient = () => {
       </div>
 
       {/* Patient Table */}
-      {/* Patient Table */}
       <div className="bg-white p-5 rounded-lg shadow-sm overflow-x-auto">
         <table className="w-full text-left">
           <thead>
@@ -112,7 +86,7 @@ const Patient = () => {
             </tr>
           </thead>
           <tbody>
-            {patients.map((patient, index) => (
+            {filteredPatients.map((patient, index) => (
               <tr key={patient.id} className="border-b hover:bg-gray-50">
                 <td className="py-4 px-6">{index + 1}</td>
                 <td className="py-4 px-6 font-semibold">
@@ -142,6 +116,13 @@ const Patient = () => {
                 </td>
               </tr>
             ))}
+            {filteredPatients.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-gray-500">
+                  No patients found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

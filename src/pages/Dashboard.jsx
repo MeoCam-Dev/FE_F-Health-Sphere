@@ -1,103 +1,143 @@
+import { useEffect, useState } from "react";
 import {
   FaUserInjured,
   FaCalendarCheck,
   FaFileMedical,
   FaDollarSign,
 } from "react-icons/fa";
-import EarningsReport from "../components/EarningsReport";
 import RecentPatients from "../components/RecentPatients";
 import {
-  BarChart,
-  Bar,
   ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
 } from "recharts";
-
-
-
-const stats = [
-  {
-    id: 1,
-    title: "Total Patients",
-    value: "1600+",
-    change: -45.06,
-    color: "text-teal-500",
-    icon: <FaUserInjured className="text-teal-500 text-2xl" />,
-    chartColor: "#14b8a6",
-    data: [50, 70, 80, 60, 90, 100, 80],
-  },
-  {
-    id: 2,
-    title: "Appointments",
-    value: "130+",
-    change: -25.06,
-    color: "text-yellow-500",
-    icon: <FaCalendarCheck className="text-yellow-500 text-2xl" />,
-    chartColor: "#fbbf24",
-    data: [30, 50, 40, 70, 60, 80, 50],
-  },
-  {
-    id: 3,
-    title: "Prescriptions",
-    value: "4160+",
-    change: 65.06,
-    color: "text-green-500",
-    icon: <FaFileMedical className="text-green-500 text-2xl" />,
-    chartColor: "#22c55e",
-    data: [80, 90, 100, 110, 120, 130, 140],
-  },
-  {
-    id: 4,
-    title: "Total Earnings",
-    value: "4590$",
-    change: -45.06,
-    color: "text-red-500",
-    icon: <FaDollarSign className="text-red-500 text-2xl" />,
-    chartColor: "#ef4444",
-    data: [60, 70, 80, 90, 100, 110, 120],
-  },
-];
+import { getHealthRecords } from "../api/health";
+import { getPatientsById, getPatients } from "../api/patient"; // ⬅️ cần thêm getPatients()
 
 const Dashboard = () => {
+  const [chartData, setChartData] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [patientList, setPatientList] = useState([]);
+  const [patientName, setPatientName] = useState("");
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const res = await getPatients(1, 100);
+        const patients = res?.data?.items?.$values?.filter(
+          (acc) => acc.role === "Patient"
+        );
+        // const patients = res?.data?.items?.$values;
+        setPatientList(patients);
+        if (patients.length > 0) {
+          setSelectedPatient(patients[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching patient list:", error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  useEffect(() => {
+    const fetchHealthRecords = async () => {
+      if (!selectedPatient) return;
+
+      try {
+        const res = await getHealthRecords(selectedPatient);
+        const items = res?.data?.data?.items?.$values || [];
+
+        const transformed = items.map((record) => {
+          const created = new Date(record.createdTime).toLocaleTimeString();
+          const metricValues = record.recordMetricItems.$values;
+
+          const systolic = metricValues.find((m) => m.metricId === 1)?.value;
+          const diastolic = metricValues.find((m) => m.metricId === 2)?.value;
+
+          return {
+            time: created,
+            systolic,
+            diastolic,
+          };
+        });
+
+        setChartData(transformed);
+
+        const patientRes = await getPatientsById(selectedPatient);
+        setPatientName(patientRes.fullName || `Patient ${selectedPatient}`);
+      } catch (error) {
+        console.error("Error fetching health records or patient info:", error);
+        setPatientName(`Patient ${selectedPatient}`);
+        setChartData([]);
+      }
+    };
+
+    fetchHealthRecords();
+  }, [selectedPatient]);
+
   return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 rounded-xl">
-        {stats.map((item) => (
-          <div key={item.id} className="bg-white p-4 rounded-lg shadow-md">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 rounded-full bg-gray-100">{item.icon}</div>
-              <h2 className="text-gray-700 font-semibold">{item.title}</h2>
-            </div>
-
-            <h3 className="text-2xl font-bold">{item.value}</h3>
-
-            <div className="mt-2 h-16">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={item.data.map((val, index) => ({
-                    name: index,
-                    value: val,
-                  }))}>
-                  <Bar
-                    dataKey="value"
-                    fill={item.chartColor}
-                    radius={[5, 5, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <p className={`text-sm font-semibold mt-2 ${item.color}`}>
-              {item.change < 0 ? "↓" : "↑"} {Math.abs(item.change)}%
-            </p>
-          </div>
-        ))}
+    <div className="p-6">
+      {/* Dropdown chọn bệnh nhân */}
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">
+          Select Patient:
+        </label>
+        <select
+          value={selectedPatient || ""}
+          onChange={(e) => setSelectedPatient(Number(e.target.value))}
+          className="border border-gray-300 p-2 rounded w-64"
+        >
+          {patientList.map((patient) => (
+            <option key={patient.id} value={patient.id}>
+              {patient.fullName || `Patient ${patient.id}`}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="flex flex-wrap gap-6 w-full">
-        <div className="flex-1 min-w-[60%] lg:min-w-[70%] xl:min-w-[75%]">
-          <EarningsReport />
-        </div>
+      {/* Biểu đồ huyết áp */}
+      <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+  <h3 className="text-xl font-bold mb-4 text-gray-700">
+    Blood Pressure Report –{" "}
+    <span className="text-indigo-600">{patientName}</span>
+  </h3>
 
+  {chartData.length === 0 ? (
+    <p className="text-gray-500 italic text-center">
+      No health data available for this patient.
+    </p>
+  ) : (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="time" />
+        <YAxis />
+        <Tooltip />
+        <Line
+          type="monotone"
+          dataKey="systolic"
+          stroke="#8884d8"
+          name="Tâm thu"
+        />
+        <Line
+          type="monotone"
+          dataKey="diastolic"
+          stroke="#82ca9d"
+          name="Tâm trương"
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  )}
+</div>
+
+
+      {/* Recent Patients (giữ nguyên) */}
+      <div className="flex flex-wrap gap-6 w-full">
         <div className="w-full xl:w-[23%] grow-1 flex-shrink-0">
           <RecentPatients />
         </div>

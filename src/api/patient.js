@@ -3,7 +3,7 @@ export const getPatients = (pageNumber = 1, pageSize = 10) =>
   axiosInstance.get(`/accounts?pageNumber=${pageNumber}&pageSize=${pageSize}`).then((res) => res.data);
 
 // Lấy getPatients theo ID
-export const getgetPatientsById = (id) =>
+export const getPatientsById = (id) =>
   axiosInstance.get(`/accounts/${id}`).then((res) => res.data);
 
 // Tạo getPatients mới
