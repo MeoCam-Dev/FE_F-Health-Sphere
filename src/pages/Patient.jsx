@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { FaFilter } from "react-icons/fa";
-import { BsThreeDots } from "react-icons/bs";
 import { getPatients } from "../api/patient";
 
 const Patient = () => {
@@ -53,23 +51,6 @@ const Patient = () => {
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
-
-        <select className="border border-gray-300 p-3 rounded-lg w-full min-w-0">
-          <option>Sort by...</option>
-          <option>Name</option>
-          <option>Age</option>
-          <option>Blood Group</option>
-        </select>
-
-        <div className="flex items-center w-full min-w-0">
-          <input
-            type="date"
-            className="border border-gray-300 p-3 rounded-lg w-full"
-          />
-          <button className="bg-green-500 text-white p-3 px-5 rounded-lg ml-2 hover:scale-105 transition">
-            <FaFilter />
-          </button>
-        </div>
       </div>
 
       {/* Patient Table */}
@@ -82,7 +63,6 @@ const Patient = () => {
               <th className="py-4 px-6">Email</th>
               <th className="py-4 px-6">Gender</th>
               <th className="py-4 px-6">Date of Birth</th>
-              <th className="py-4 px-6">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -108,11 +88,6 @@ const Patient = () => {
                 </td>
                 <td className="py-4 px-6">
                   {patient.patientInfo?.dateOfBirth || "N/A"}
-                </td>
-                <td className="py-4 px-6">
-                  <button className="p-2 bg-gray-200 rounded-full hover:scale-110 transition">
-                    <BsThreeDots />
-                  </button>
                 </td>
               </tr>
             ))}

@@ -3,7 +3,6 @@ import { getBands, getBandBrandById } from "../api/band";
 import { getPatientsById } from "../api/patient";
 import { Pagination } from "antd";
 import { FaFilter } from "react-icons/fa";
-import { BsThreeDots } from "react-icons/bs";
 
 const Band = () => {
   const [bands, setBands] = useState([]);
@@ -14,7 +13,6 @@ const Band = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
 
   useEffect(() => {
     const fetchBands = async () => {
@@ -44,7 +42,9 @@ const Band = () => {
             try {
               const brandData = await getBandBrandById(band.id);
               nameBrand = brandData.data.nameBrand;
-            } catch {}
+            } catch (error) {
+              console.error("Error fetching brand data:", error);
+            }
 
             // Get patient full name
             try {
@@ -52,7 +52,9 @@ const Band = () => {
                 const patientData = await getPatientsById(band.patientId);
                 patientName = patientData.fullName;
               }
-            } catch {}
+            } catch (error) {
+              console.error("Error fetching patient data:", error);
+            }
 
             return { ...band, nameBrand, patientName };
           })
@@ -68,7 +70,7 @@ const Band = () => {
     };
 
     fetchBands();
-  }, [currentPage, searchTerm, sortBy, dateFilter]);
+  }, [currentPage, searchTerm, sortBy]);
 
   return (
     <div className="p-6 min-h-screen">
@@ -126,7 +128,6 @@ const Band = () => {
                   <th className="py-4 px-6">BandCode</th>
                   <th className="py-4 px-6">BandBrand</th>
                   <th className="py-4 px-6">Created at</th>
-                  <th className="py-4 px-6">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,11 +142,6 @@ const Band = () => {
                     <td className="py-4 px-6">{band.nameBrand}</td>
                     <td className="py-4 px-6">
                       {new Date(band.createdTime).toLocaleDateString()}
-                    </td>
-                    <td className="py-4 px-6">
-                      <button className="p-2 bg-gray-200 rounded-full hover:scale-110 transition">
-                        <BsThreeDots />
-                      </button>
                     </td>
                   </tr>
                 ))}
