@@ -25,7 +25,6 @@ const Dashboard = () => {
         const patients = res?.data?.items?.$values?.filter(
           (acc) => acc.role === "Patient"
         );
-        // const patients = res?.data?.items?.$values;
         setPatientList(patients);
         if (patients.length > 0) {
           setSelectedPatient(patients[0].id);
@@ -36,6 +35,10 @@ const Dashboard = () => {
     };
 
     fetchPatients();
+
+    // const interval = setInterval(fetchPatients, 3000); // Lặp lại mỗi 30s
+
+    // return () => clearInterval(interval); // Cleanup interval khi component unmount
   }, []);
 
   useEffect(() => {
@@ -72,6 +75,10 @@ const Dashboard = () => {
     };
 
     fetchHealthRecords();
+
+    const interval = setInterval(fetchHealthRecords, 3000);
+
+    return () => clearInterval(interval);
   }, [selectedPatient]);
 
   return (
