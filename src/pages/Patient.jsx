@@ -25,13 +25,15 @@ const Patient = () => {
   }, []);
 
   // Lọc bệnh nhân dựa trên searchTerm và selectedGender
+  // Lọc bệnh nhân dựa trên searchTerm, selectedGender và role
   const filteredPatients = patients.filter((patient) => {
     const matchesSearchTerm = patient.fullName
       ?.toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesGender =
       !selectedGender || patient.patientInfo?.gender === selectedGender;
-    return matchesSearchTerm && matchesGender;
+    const matchesRole = patient.role === "Patient"; // Lọc theo role: Patient
+    return matchesSearchTerm && matchesGender && matchesRole;
   });
 
   return (
