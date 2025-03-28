@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../firebaseConfig";
+import { auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import PropTypes from "prop-types"; 
-// Tạo context cho Auth
+import PropTypes from "prop-types";
+import { loginWithGoogle } from "../api/auth"; // API gửi idToken tới BE
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -14,21 +14,33 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
+        try {
+          const idToken = await currentUser.getIdToken();
 
-        let userRole = "user";
-        if (userSnap.exists()) {
-          userRole = userSnap.data().role;
+          // Gửi idToken tới BE để lấy token và role
+          const response = await loginWithGoogle(idToken);
+
+          if (response?.token) {
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("role", response.role.$values[0]);
+            localStorage.setItem("email", response.email);
+            localStorage.setItem("name", response.name);
+
+            setUser(currentUser);
+            setRole(response.role.$values[0]);
+          } else {
+            console.error("Failed to fetch role from backend.");
+          }
+        } catch (error) {
+          console.error("Error during authentication:", error);
         }
-
-        setUser(currentUser);
-        setRole(userRole);
-        localStorage.setItem("role", userRole);
       } else {
         setUser(null);
         setRole(null);
+        localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("email");
+        localStorage.removeItem("name");
       }
       setLoading(false);
     });
@@ -42,6 +54,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
@@ -50,4 +63,3 @@ AuthProvider.propTypes = {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-
